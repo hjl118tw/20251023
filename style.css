@@ -1,0 +1,162 @@
+/* style.css - 暖粉色系版本 */
+
+/* 全局樣式 */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffe4e1; /* 暖粉色背景 */
+  color: #5a3e36; /* 深咖啡文字 */
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  background-color: #fff5e6; /* 柔和奶油色 */
+  color: #5a3e36; /* 深咖啡文字 */
+  text-align: center;
+  padding: 40px 20px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+header p {
+  margin: 10px 0 0;
+  font-size: 1.2em;
+}
+
+/* Main */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+main img {
+  border-radius: 50%;
+  width: 240px;
+  height: 240px;
+  margin-bottom: 20px;
+  border: 4px solid #fff5e6; /* 暖奶油色邊框 */
+}
+
+main section {
+  max-width: 600px;
+}
+
+/* Footer */
+footer {
+  background-color: #ecd2a4; /* 米棕色，帶點暖黃感 */
+  color: #5a3e36; /* 深咖啡文字 */
+  padding: 30px 20px;
+  text-align: center;
+}
+
+footer a {
+  color: #5a3e36; /* 深咖啡色連結 */
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+// =====================
+// 顯示提示文字按鈕
+// =====================
+const thankButton = document.getElementById('thankBtn');
+const thankMessage = document.getElementById('thankMessage');
+
+thankButton.addEventListener('click', () => {
+  thankMessage.textContent = "謝謝瀏覽我的名片！";
+  thankMessage.style.display = "block";
+});
+
+// =====================
+// 簡單煙火效果
+// =====================
+const fireworkBtn = document.getElementById('fireworkBtn');
+const canvas = document.getElementById('fireworkCanvas');
+const ctx = canvas.getContext('2d');
+
+// 調整 canvas 尺寸
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+canvas.style.position = "fixed";
+canvas.style.top = "0";
+canvas.style.left = "0";
+canvas.style.pointerEvents = "none"; // 讓按鈕可以點
+canvas.style.zIndex = "9999";
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.velX = (Math.random() - 0.5) * 5;
+    this.velY = (Math.random() - 0.5) * 5;
+    this.alpha = 1;
+    this.color = color;
+    this.size = Math.random() * 3 + 2;
+  }
+  update() {
+    this.x += this.velX;
+    this.y += this.velY;
+    this.alpha -= 0.02;
+  }
+  draw() {
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function createFirework() {
+  const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+  const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+  const colors = ['#ff4d6d','#ffaf3f','#ffd93d','#6be0ff','#8affaa'];
+  const particles = [];
+  for (let i = 0; i < 50; i++) {
+    particles.push(new Particle(x, y, colors[Math.floor(Math.random()*colors.length)]));
+  }
+
+  function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.1)"; // 輕微殘影效果
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, index) => {
+      p.update();
+      p.draw();
+      if (p.alpha <= 0) particles.splice(index, 1);
+    });
+    if (particles.length > 0) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  animate();
+}
+
+// 點擊按鈕放煙火
+fireworkBtn.addEventListener('click', createFirework);
+
